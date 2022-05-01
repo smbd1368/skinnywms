@@ -319,7 +319,7 @@ class GribField(object):
             # try mapping by name
             if self.levtype in LEVEL_TYPES:
                 self._levtype = LEVEL_TYPES[self.levtype]
-                print(self._levtype)
+
             else:
                 # try mapping by code
                 levtype_code = self.get_code("levtype")
