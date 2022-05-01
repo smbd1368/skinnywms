@@ -69,6 +69,16 @@ server.magics_prefix = args.magics_prefix
 
 @application.route("/wms", methods=["GET"])
 def wms():
+
+    argq = request.args
+    dic = argq.to_dict()
+    location = "data/" + dic['time'] + "/"
+
+    server = WMSServer(
+        Availability(location),
+        Plotter(args.baselayer),
+        Styler())
+
     return server.process(
         request,
         Response=Response,
