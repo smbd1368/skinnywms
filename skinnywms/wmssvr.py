@@ -10,12 +10,16 @@ import os
 import argparse
 
 from flask import Flask, request, Response, render_template, send_file, jsonify
+from flask_cors import CORS, cross_origin
 from .server import WMSServer
 from .plot.magics import Plotter, Styler
 from .data.fs import Availability
 
 
 application = Flask(__name__)
+
+cors = CORS(application)
+application.config['CORS_HEADERS'] = 'Content-Type'
 
 demo = os.path.join(os.path.dirname(__file__), "testdata", "sfc.grib")
 
@@ -67,6 +71,7 @@ server.magics_prefix = args.magics_prefix
 
 
 @application.route("/wms", methods=["GET"])
+@cross_origin()
 def wms():
 
     argq = request.args
