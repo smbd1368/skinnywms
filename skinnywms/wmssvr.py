@@ -92,9 +92,30 @@ def wms():
     )
 
 
-
 @application.route("/count", methods=["GET"])
 def count():
+    totalDir = 0
+    for base, dirs, files in os.walk("./data"):
+        for directories in dirs:
+            totalDir += 1
+    return jsonify({"count":  totalDir})
+
+
+@application.route("/listdir", methods=["GET"])
+def ListDir():
+    data =[]
+    argq = request.args
+    dic = argq.to_dict()
+    location = "data/" + dic['time'] + "/"
+    for base, dirs, files in os.walk("./data/"+location):
+        for directories in files:
+            print(directories)
+            data = [files]
+    return jsonify({"count":  data  })
+
+
+@application.route("/timeseries", methods=["GET"])
+def timeseries():
     totalDir = 0
     for base, dirs, files in os.walk("./data"):
         for directories in dirs:
