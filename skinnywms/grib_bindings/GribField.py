@@ -296,6 +296,7 @@ LEVEL_TYPES = {"pl": PressureLevel(), "sfc": SingleLevel(), "ml": ModelLevel()}
 
 class GribField(object):
     def __init__(self, handle, path, offset):
+
         self._handle = handle
 
         self._path = path
@@ -318,10 +319,15 @@ class GribField(object):
             # try mapping by name
             if self.levtype in LEVEL_TYPES:
                 self._levtype = LEVEL_TYPES[self.levtype]
+
             else:
                 # try mapping by code
                 levtype_code = self.get_code("levtype")
+                if levtype_code == 0:
+                    levtype_code=1
                 self._levtype = LEVEL_TYPE_CODES[levtype_code]
+
+
         except KeyError:
             raise Exception(
                 "Unsupported level type '{}' in grib {}".format(self.levtype, path)
