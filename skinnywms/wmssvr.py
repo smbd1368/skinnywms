@@ -92,21 +92,12 @@ def wms():
     )
 
 
-@application.route("/count", methods=["GET"])
-def count():
-    totalDir = 0
-    for base, dirs, files in os.walk("./data"):
-        for directories in dirs:
-            totalDir += 1
-    return jsonify({"count":  totalDir})
-
-
-def f(path):
-    if os.path.isdir(path):
+def GetDirectoriesName(base_path, depth):
+    if os.path.isdir(base_path):
         d = {}
-        for path1 in os.listdir(path):
+        for path1 in os.listdir(base_path):
             d[path1] = {}
-            path2 = os.path.join(path, path1)
+            path2 = os.path.join(base_path, path1)
             if os.path.isdir(path2):
                 for times in os.listdir(path2):
                     d[path1][times] =  os.listdir(os.path.join(path2, times))
