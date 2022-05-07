@@ -101,17 +101,24 @@ def count():
     return jsonify({"count":  totalDir})
 
 
+def f(path):
+    if os.path.isdir(path):
+        d = {}
+        for path1 in os.listdir(path):
+            d[path1] = {}
+            path2 = os.path.join(path, path1)
+            if os.path.isdir(path2):
+                for times in os.listdir(path2):
+                    d[path1][times] =  os.listdir(os.path.join(path2, times))
+    else:
+        d = []
+
+    return d
+
 @application.route("/listdir", methods=["GET"])
 def ListDir():
-    data =[]
-    argq = request.args
-    dic = argq.to_dict()
-    location = "data/" + dic['time'] + "/"
-    for base, dirs, files in os.walk("./data/"+location):
-        for directories in files:
-            print(directories)
-            data = [files]
-    return jsonify({"count":  data  })
+    data = f('./data')
+    return jsonify(data)
 
 
 @application.route("/timeseries", methods=["GET"])
