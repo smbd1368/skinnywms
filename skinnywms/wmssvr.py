@@ -43,7 +43,7 @@ parser.add_argument(
     "--user_style", default="", help="Path to a json file containing the style to use"
 )
 
-parser.add_argument("--host", default="127.0.0.1", help="Hostname")
+parser.add_argument("--host", default="0.0.0.0", help="Hostname")
 parser.add_argument("--port", default=5000, help="Port number")
 parser.add_argument(
     "--baselayer", default="", help="Path to a directory where to find the baselayer"
