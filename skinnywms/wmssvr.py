@@ -14,6 +14,9 @@ from flask_cors import CORS, cross_origin
 from .server import WMSServer
 from .plot.magics import Plotter, Styler
 from .data.fs import Availability
+from collections import defaultdict
+import json
+import glob, os.path
 
 
 application = Flask(__name__)
@@ -92,25 +95,73 @@ def wms():
     )
 
 
-def GetDirectoriesName(base_path, depth):
-    if os.path.isdir(base_path):
-        d = {}
-        for path1 in os.listdir(base_path):
-            d[path1] = {}
-            path2 = os.path.join(base_path, path1)
-            if os.path.isdir(path2):
-                for times in os.listdir(path2):
-                    d[path1][times] =  os.listdir(os.path.join(path2, times))
-    else:
-        d = []
+def getDirectoriesName(base_path, depth):
+    list_dir = {}
+    # for each depth start
+    if depth == '1':
+        list_dir = os.listdir(base_path)
 
+
+    if depth == '2':
+        if os.path.isdir(base_path):
+            list_dir = {}
+            for path1 in os.listdir(base_path):
+                list_dir[path1] = {}
+                path2 = os.path.join(base_path, path1)
+                list_dir[path1] = os.listdir(os.path.join(path2))
+
+    if depth == '3':
+        if os.path.isdir(base_path):
+            list_dir = {}
+            for path1 in os.listdir(base_path):
+                list_dir[path1] = {}
+                path2 = os.path.join(base_path, path1)
+                if os.path.isdir(path2):
+                    for times in os.listdir(path2):
+                        list_dir[path1][times] = os.listdir(os.path.join(path2, times))
+        else:
+            list_dir = []
+
+    return list_dir
+
+
+def nested_dict():
+   """
+   Creates a default dictionary where each value is an other default dictionary.
+   """
+   return defaultdict(nested_dict)
+
+def default_to_regular(d):
+    """
+    Converts defaultdicts of defaultdicts to dict of dicts.
+    """
+    if isinstance(d, defaultdict):
+        d = {k: default_to_regular(v) for k, v in d.items()}
     return d
+
+def get_path_dict(paths):
+    new_path_dict = nested_dict()
+    for path in paths:
+        parts = path.split('/')
+        if parts:
+            marcher = new_path_dict
+            for key in parts[:-1]:
+               marcher = marcher[key]
+            marcher[parts[-1]] = parts[-1]
+    return default_to_regular(new_path_dict)
+
 
 @application.route("/listdir", methods=["GET"])
 def ListDir():
-    data = f('./data')
-    return jsonify(data)
-
+    request_args = request.args.to_dict()
+    depth = request_args['depth']
+    number_depth = ""
+    for number in range(0,int(depth)):
+        number_depth = number_depth+"/*"
+    files_depth = glob.glob('./data'+number_depth)
+    dirs_depth = filter(lambda f: os.path.isdir(f), files_depth)
+    result = get_path_dict(dirs_depth)
+    return jsonify(result)
 
 @application.route("/timeseries", methods=["GET"])
 def timeseries():
