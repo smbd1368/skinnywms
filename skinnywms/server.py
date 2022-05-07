@@ -73,6 +73,10 @@ class WMSServer:
         # For objects to store context
         self.stash = {}
 
+    def setAvailability(self, availability):
+        self.availability = availability
+        self.availability.set_context(self)
+
     def process(
         self, request, Response, send_file, render_template, reraise=False, output=None
     ):
