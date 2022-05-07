@@ -11,7 +11,6 @@ import argparse
 
 from flask import Flask, request, Response, render_template, send_file, jsonify
 from flask_cors import CORS, cross_origin
-
 from .server import WMSServer
 from .plot.magics import Plotter, Styler
 from .data.fs import Availability
@@ -91,6 +90,37 @@ def wms():
         render_template=render_template,
         reraise=True,
     )
+
+
+@application.route("/count", methods=["GET"])
+def count():
+    totalDir = 0
+    for base, dirs, files in os.walk("./data"):
+        for directories in dirs:
+            totalDir += 1
+    return jsonify({"count":  totalDir})
+
+
+@application.route("/listdir", methods=["GET"])
+def ListDir():
+    data =[]
+    argq = request.args
+    dic = argq.to_dict()
+    location = "data/" + dic['time'] + "/"
+    for base, dirs, files in os.walk("./data/"+location):
+        for directories in files:
+            print(directories)
+            data = [files]
+    return jsonify({"count":  data  })
+
+
+@application.route("/timeseries", methods=["GET"])
+def timeseries():
+    totalDir = 0
+    for base, dirs, files in os.walk("./data"):
+        for directories in dirs:
+            totalDir += 1
+    return jsonify({"count":  totalDir})
 
 
 @application.route("/availability", methods=["GET"])

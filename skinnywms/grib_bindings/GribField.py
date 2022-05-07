@@ -324,7 +324,7 @@ class GribField(object):
                 # try mapping by code
                 levtype_code = self.get_code("levtype")
                 if levtype_code == 0:
-                    levtype_code=1
+                    levtype_code = 100
                 self._levtype = LEVEL_TYPE_CODES[levtype_code]
 
 
