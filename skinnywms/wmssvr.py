@@ -153,12 +153,13 @@ def get_path_dict(paths):
 
 @application.route("/listdir", methods=["GET"])
 def ListDir():
-    request_args = request.args.to_dict()
-    depth = request_args['depth']
+    # request_args = request.args.to_dict()
+    # depth = request_args['depth']
     number_depth = ""
-    for number in range(0,int(depth)):
-        number_depth = number_depth+"/*"
-    files_depth = glob.glob('./data'+number_depth)
+    depth = 3
+    for number in range(0, depth):
+        number_depth = number_depth + "/*"
+    files_depth = glob.glob('./data' + number_depth)
     dirs_depth = filter(lambda f: os.path.isdir(f), files_depth)
     result = get_path_dict(dirs_depth)
     return jsonify(result)
