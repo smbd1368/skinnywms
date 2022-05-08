@@ -162,7 +162,8 @@ def ListDir():
     files_depth = glob.glob('./data' + number_depth)
     dirs_depth = filter(lambda f: os.path.isdir(f), files_depth)
     result = get_path_dict(dirs_depth)
-    return jsonify(result)
+
+    return jsonify(result["."]["data"])
 
 @application.route("/timeseries", methods=["GET"])
 def timeseries():
