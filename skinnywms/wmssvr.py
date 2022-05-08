@@ -17,6 +17,7 @@ from .data.fs import Availability
 from collections import defaultdict
 import json
 import glob, os.path
+from mergedeep import merge
 
 
 application = Flask(__name__)
@@ -56,7 +57,6 @@ parser.add_argument(
     help="prefix used to pass information to magics",
 )
 
-
 args = parser.parse_args()
 
 if args.style != "":
@@ -68,7 +68,6 @@ if args.user_style != "":
 server = WMSServer(
     Availability(args.path), Plotter(args.baselayer), Styler(args.user_style)
 )
-
 
 server.magics_prefix = args.magics_prefix
 
@@ -101,7 +100,6 @@ def getDirectoriesName(base_path, depth):
     if depth == '1':
         list_dir = os.listdir(base_path)
 
-
     if depth == '2':
         if os.path.isdir(base_path):
             list_dir = {}
@@ -126,10 +124,11 @@ def getDirectoriesName(base_path, depth):
 
 
 def nested_dict():
-   """
-   Creates a default dictionary where each value is an other default dictionary.
-   """
-   return defaultdict(nested_dict)
+    """
+    Creates a default dictionary where each value is an other default dictionary.
+    """
+    return defaultdict(nested_dict)
+
 
 def default_to_regular(d):
     """
@@ -139,6 +138,7 @@ def default_to_regular(d):
         d = {k: default_to_regular(v) for k, v in d.items()}
     return d
 
+
 def get_path_dict(paths):
     new_path_dict = nested_dict()
     for path in paths:
@@ -146,32 +146,41 @@ def get_path_dict(paths):
         if parts:
             marcher = new_path_dict
             for key in parts[:-1]:
-               marcher = marcher[key]
+                marcher = marcher[key]
             marcher[parts[-1]] = parts[-1]
     return default_to_regular(new_path_dict)
 
 
 @application.route("/listdir", methods=["GET"])
-def ListDir():
+def list_dir():
     # request_args = request.args.to_dict()
     # depth = request_args['depth']
+    result = {}
+    result_init = {}
     number_depth = ""
-    depth = 3
-    for number in range(0, depth):
-        number_depth = number_depth + "/*"
-    files_depth = glob.glob('./data' + number_depth)
-    dirs_depth = filter(lambda f: os.path.isdir(f), files_depth)
-    result = get_path_dict(dirs_depth)
+    depths = 5
+    #  for each depth merge all result
+    for depth in range(1, depths):
+        # for each depth add '/*' to string
+        for number in range(0, depth):
+            number_depth = number_depth + "/*"
+        files_depth = glob.glob('./data' + number_depth)
+        dirs_depth = filter(lambda f: os.path.isdir(f), files_depth)
+        #  get dict of string directories
+        result = get_path_dict(dirs_depth)
+        #  get result of merge two dict
+        result = merge(result_init, result)
 
-    return jsonify(result["."]["data"])
+    return jsonify(result['.']['data'])
+
 
 @application.route("/timeseries", methods=["GET"])
 def timeseries():
-    totalDir = 0
+    total_dir = 0
     for base, dirs, files in os.walk("./data"):
         for directories in dirs:
-            totalDir += 1
-    return jsonify({"count":  totalDir})
+            total_dir += 1
+    return jsonify({"count": total_dir})
 
 
 @application.route("/availability", methods=["GET"])
