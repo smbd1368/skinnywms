@@ -203,11 +203,15 @@ class DataLayer(Layer):
             return self._first
         time = dims.get("time", None)
         LOG.info("Look up layer with %s and time %s (%s)" % (self, time, type(time)))
-        if time is None:
+        try:
+
+            if time is None:
+                field = self._first
+            else:
+                time = datetime.datetime.strptime(time[:19], "%Y-%m-%dT%H:%M:%S")
+                field = self._fields[time]
+        except:
             field = self._first
-        else:
-            time = datetime.datetime.strptime(time[:19], "%Y-%m-%dT%H:%M:%S")
-            field = self._fields[time]
         return field
 
     def as_dict(self):
