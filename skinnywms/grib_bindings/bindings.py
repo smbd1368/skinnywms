@@ -162,8 +162,8 @@ def checked_error_in_last_paramater(fn):
         params.append(err_p)
 
         result = fn(*params)
-        if err.value:
-            raise GribError(err)
+        # if err.value:
+        #     raise GribError(err)
         return result
 
     return wrapped
