@@ -194,4 +194,4 @@ def index():
 
 
 def execute():
-    application.run(port=args.port, host=args.host, debug=True, threaded=False)
+    application.run(port=args.port, host=args.host, debug=True, threaded=True)
