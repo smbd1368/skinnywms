@@ -94,6 +94,7 @@ def wms():
     #  for each depth merge all result
     for depth in range(1, depths):
         # for each depth add '/*' to string
+        number_depth = ""
         for number in range(0, depth):
             number_depth = number_depth + "/*"
         files_depth = glob.glob('./data' + number_depth)
@@ -107,7 +108,7 @@ def wms():
             render_template=render_template,
             reraise=True,
             )
-    return server_dump["./data/ecmwf/"+location+"/"+time]
+    return server_dump["./data/ecmwf/"+date+"/"+time]
 
 
 def getDirectoriesName(base_path, depth):
