@@ -108,7 +108,7 @@ def wms():
             render_template=render_template,
             reraise=True,
             )
-    return server_dump["./data/ecmwf/"+date+"/"+time]
+    return server_dump["./data/"+w_model+"/"+date+"/"+time]
 
 
 def getDirectoriesName(base_path, depth):
