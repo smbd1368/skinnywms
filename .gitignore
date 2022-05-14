@@ -8,4 +8,5 @@ meta.xml
 *&*
 .idea/
 .idea
-data/
+data/ecmwf/20220501/06
+data/noaa
