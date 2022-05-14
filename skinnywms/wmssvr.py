@@ -75,23 +75,39 @@ server.magics_prefix = args.magics_prefix
 @application.route("/wms", methods=["GET"])
 @cross_origin()
 def wms():
-    request_args = request.args.to_dict()
 
+    request_args = request.args.to_dict()
+    # when = request_args['when'] if "when" in request_args else 'next'
     w_model = request_args['model'] if "model" in request_args else 'ecmwf'
     date = request_args['date'] if "date" in request_args else '20220501'
     time = request_args['time'] if "time" in request_args else '00'
 
     location = "data/" + w_model + "/" + date + "/" + time + "/"
 
-    server.setAvailability(Availability(location))
 
-    return server.process(
-        request,
-        Response=Response,
-        send_file=send_file,
-        render_template=render_template,
-        reraise=True,
-    )
+
+    base_path = "/data"
+    result = {}
+    result_init = {}
+    number_depth = ""
+    depths = 5
+    #  for each depth merge all result
+    for depth in range(1, depths):
+        # for each depth add '/*' to string
+        for number in range(0, depth):
+            number_depth = number_depth + "/*"
+        files_depth = glob.glob('./data' + number_depth)
+
+    server_list = server.setAvailability(Availability(files_depth))
+    for location in server :
+        server_dump[location] = server.process(
+            request,
+            Response=Response,
+            send_file=send_file,
+            render_template=render_template,
+            reraise=True,
+            )
+    return server_dump["./data/ecmwf/"+location+"/"+time]
 
 
 def getDirectoriesName(base_path, depth):
@@ -166,6 +182,7 @@ def list_dir():
             number_depth = number_depth + "/*"
         files_depth = glob.glob('./data' + number_depth)
         dirs_depth = filter(lambda f: os.path.isdir(f), files_depth)
+
         #  get dict of string directories
         result = get_path_dict(dirs_depth)
         #  get result of merge two dict
