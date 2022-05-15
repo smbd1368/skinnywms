@@ -20,7 +20,7 @@ import glob, os.path
 from mergedeep import merge
 
 
-application = Flask(__name__)
+application = Flask(__name__, static_url_path='', static_folder='web/static',)
 
 cors = CORS(application)
 application.config['CORS_HEADERS'] = 'Content-Type'

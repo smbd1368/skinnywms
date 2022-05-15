@@ -1,0 +1,265 @@
+[
+  {
+    "english_title": "Divergence",
+    "persian_title": "واگرایی",
+    "subsets": [
+      {
+        "name": "d_250",
+        "english_title": "Divergence at 250",
+        "persian_title": "واگرایی در 250"
+      },
+      {
+        "name": "d_700",
+        "english_title": "Divergence at 700",
+        "persian_title": "واگرایی در 700"
+      },
+      {
+        "name": "d_925",
+        "english_title": "Divergence at 925",
+        "persian_title": "واگرایی در 925"
+      }
+    ]
+  },
+  {
+    "name": "tp",
+    "english_title": "Total Precipitation",
+    "persian_title": "بارش کل"
+  },
+  {
+    "english_title": "Geopotential height",
+    "persian_title": "ارتفاع ژئوپتانسیل",
+    "subsets":[
+      {
+        "name": "gh_250",
+        "english_title": "Geopotential height at 250",
+        "persian_title": "ارتفاع ژئوپتانسیل در 250"
+      },
+      {
+        "name": "gh_500",
+        "english_title": "Geopotential height at 500",
+        "persian_title": "ارتفاع ژئوپتانسیل در 500"
+      },
+      {
+        "name": "gh_850",
+        "english_title": "Geopotential height at 850",
+        "persian_title": "ارتفاع ژئوپتانسیل در 850"
+      }
+    ]
+  },
+  {
+    "name": "mwp",
+    "english_title": "Mean wave period",
+    "persian_title": "دوره موج متوسط"
+  },
+  {
+    "name": "swh",
+    "english_title": "Significant height of combined wind waves and swell",
+    "persian_title": "ارتفاع قابل توجهی از ترکیب امواج باد و تورم"
+  },
+  {
+    "name": "mwd",
+    "english_title": "Mean wave direction",
+    "persian_title": "جهت موج متوسط"
+  },
+  {
+    "name": "skt",
+    "english_title": "Skin temperature",
+    "persian_title": "دمای پوست"
+  },
+  {
+    "name": "msl",
+    "english_title": "Mean sea level pressure",
+    "persian_title": ""
+  },
+  {
+    "name": "sp",
+    "english_title": "Surface pressure",
+    "persian_title": "فشار متوسط سطح دریا"
+  },
+  {
+    "name": "tcwv",
+    "english_title": "Total column vertically-integrated water vapour",
+    "persian_title": "کل ستون بخار آب یکپارچه عمودی"
+  },
+  {
+    "english_title": "Relative humidity",
+    "persian_title": "رطوبت نسبی",
+    "subsets":[
+      {
+        "name": "r_700",
+        "english_title": "Relative humidity at 700",
+        "persian_title": "رطوبت نسبی در 700"
+      },
+      {
+        "name": "r_850",
+        "english_title": "Relative humidity at 850",
+        "persian_title": "رطوبت نسبی در 850"
+      }
+    ]
+  },
+  {
+    "english_title": "Temperature",
+    "persian_title": "دما",
+    "subsets":[
+      {
+        "name": "t_250",
+        "english_title": "Temperature at 250",
+        "persian_title": "دما در 250"
+      },
+      {
+        "name": "t_500",
+        "english_title": "Temperature at 500",
+        "persian_title": "دما در 500"
+      },
+      {
+        "name": "t_850",
+        "english_title": "Temperature at 850",
+        "persian_title": "دما در 850"
+      }
+    ]
+  },
+  {
+    "name": "st20",
+    "english_title": "Soil temperature top 20 cm",
+    "persian_title": "دمای بالای خاک 20 سانتی متر"
+  },
+  {
+    "name": "2t",
+    "english_title": "2 metre temperature",
+    "persian_title": "دمای 2 متر"
+  },
+  {
+    "english_title": "U component of wind",
+    "persian_title": "U جزء باد",
+    "subsets":[
+      {
+        "name": "u_200",
+        "english_title": "U component of wind at 200",
+        "persian_title": "U جزء باد در 200"
+      },
+      {
+        "name": "u_250",
+        "english_title": "U component of wind at 250",
+        "persian_title": "U جزء باد در 250"
+      },
+      {
+        "name": "u_500",
+        "english_title": "U component of wind at 500",
+        "persian_title": "U جزء باد در 500"
+      },
+      {
+        "name": "u_700",
+        "english_title": "U component of wind at 700",
+        "persian_title": "U جزء باد در 700"
+      },
+      {
+        "name": "u_850",
+        "english_title": "U component of wind at 850",
+        "persian_title": "U جزء باد در 850"
+      },
+      {
+        "name": "u_925",
+        "english_title": "U component of wind at 925",
+        "persian_title": "U جزء باد در 925"
+      }
+    ]
+  },
+  {
+    "name": "10u",
+    "english_title": "10 metre U wind component",
+    "persian_title": "جزء 10 متری باد U"
+  },
+  {
+    "english_title": "V component of wind",
+    "persian_title": "جزء V باد",
+    "subsets":[
+      {
+        "name": "v_200",
+        "english_title": "V component of wind at 200",
+        "persian_title": "جزء V باد در 200"
+      },
+      {
+        "name": "v_250",
+        "english_title": "V component of wind at 250",
+        "persian_title": "جزء V باد در 250"
+      },
+      {
+        "name": "v_500",
+        "english_title": "V component of wind at 500",
+        "persian_title": "جزء V باد در 500"
+      },
+      {
+        "name": "v_700",
+        "english_title": "V component of wind at 700",
+        "persian_title": "جزء V باد در 700"
+      },
+      {
+        "name": "v_850",
+        "english_title": "V component of wind at 850",
+        "persian_title": "جزء V باد در 850"
+      },
+      {
+        "name": "v_925",
+        "english_title": "V component of wind at 925",
+        "persian_title": "جزء V باد در 925"
+      }
+    ]
+  },
+  {
+    "english_title": "Vorticity (relative)",
+    "persian_title": "گرداب (نسبی)",
+    "subsets":[
+      {
+        "name": "vo_250",
+        "english_title": "Vorticity (relative) at 250",
+        "persian_title": "گرداب (نسبی) در 250"
+      },
+      {
+        "name": "vo_700",
+        "english_title": "Vorticity (relative) at 700",
+        "persian_title": "گرداب (نسبی) در 700"
+      },
+      
+      {
+        "name": "vo_925",
+        "english_title": "Vorticity (relative) at 925",
+        "persian_title": "گرداب (نسبی) در 925"
+      }
+    ]
+  },
+  {
+    "name": "10u/10v",
+    "english_title": "10u/10v",
+    "persian_title": "10u/10v"
+  },
+  {
+    "name": "mp2",
+    "english_title": "Mean zero-crossing wave period",
+    "persian_title": "میانگین دوره موج صفر"
+  },
+  {
+    "name": "pp1d",
+    "english_title": "Peak wave period",
+    "persian_title": "دوره اوج موج"
+  },
+  {
+    "name": "foreground",
+    "english_title": "Foreground",
+    "persian_title": "نزدیک نما"
+  },
+  {
+    "name": "grid",
+    "english_title": "Grid",
+    "persian_title": "توری"
+  },
+  {
+    "name": "boundaries",
+    "english_title": "Boundaries",
+    "persian_title": "مرزها"
+  },
+  {
+    "name": "oceans",
+    "english_title": "Oceans",
+    "persian_title": "اقیانوس ها"
+  }
+]
