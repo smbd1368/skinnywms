@@ -75,15 +75,15 @@ server.magics_prefix = args.magics_prefix
 @application.route("/wms", methods=["GET"])
 @cross_origin()
 def wms():
-    # request_args = request.args.to_dict()
-    #
-    # w_model = request_args['model'] if "model" in request_args else 'ecmwf'
-    # date = request_args['date'] if "date" in request_args else '20220501'
-    # time = request_args['time'] if "time" in request_args else '00'
-    #
-    # location = "data/" + w_model + "/" + date + "/" + time + "/"
-    #
-    # server.setAvailability(Availability(location))
+    request_args = request.args.to_dict()
+
+    w_model = request_args['model'] if "model" in request_args else 'ecmwf'
+    date = request_args['date'] if "date" in request_args else '20220501'
+    time = request_args['time'] if "time" in request_args else '00'
+
+    location = "data/" + w_model + "/" + date + "/" + time + "/"
+
+    server.setAvailability(Availability(location))
 
     return server.process(
         request,
