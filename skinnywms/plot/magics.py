@@ -31,7 +31,7 @@ mimetypes.add_type("application/x-netcdf", ".nc4", strict=False)
 MAGICS_OUTPUT_TYPES = {
     "image/png": "png",
 }
-LOCK = threading.Lock()
+# LOCK = threading.Lock()
 
 MACRO_TEXT = """
 {}
@@ -309,52 +309,52 @@ class Plotter(datatypes.Plotter):
         output_fname = output.target(magics_format)
         path, _ = os.path.splitext(output_fname)
 
-        with LOCK:
+        # with LOCK:
 
-            self.driver.silent()
+        self.driver.silent()
 
-            args = [
-                self.output(
-                    formats=magics_format,
-                    transparent=transparent,
-                    width=width,
-                    path=path,
+        args = [
+            self.output(
+                formats=magics_format,
+                transparent=transparent,
+                width=width,
+                path=path,
+            ),
+            self.mmap(
+                bbox=bbox,
+                width=width,
+                height=height,
+                crs_name=crs_name,
+                lon_vertical=lon_vertical,
+            ),
+        ]
+
+        args += self.mlayers(context, layers, styles)
+
+        if _macro:
+            return (
+                "text/x-python",
+                self.macro_text(
+                    args,
+                    output.target(".py"),
+                    getattr(context, "data_url", None),
+                    layers,
+                    styles,
                 ),
-                self.mmap(
-                    bbox=bbox,
-                    width=width,
-                    height=height,
-                    crs_name=crs_name,
-                    lon_vertical=lon_vertical,
-                ),
-            ]
-
-            args += self.mlayers(context, layers, styles)
-
-            if _macro:
-                return (
-                    "text/x-python",
-                    self.macro_text(
-                        args,
-                        output.target(".py"),
-                        getattr(context, "data_url", None),
-                        layers,
-                        styles,
-                    ),
-                )
-
-            # self.log.debug('plot(): Calling self.driver.plot(%s)', args)
-            try:
-                self.driver.plot(*args)
-            except Exception as e:
-                self.log.exception("Magics error: %s", e)
-                raise
-
-            self.log.debug(
-                "plot(): Size of %s: %s", output_fname, os.stat(output_fname).st_size
             )
 
-            return format, output_fname
+        # self.log.debug('plot(): Calling self.driver.plot(%s)', args)
+        try:
+            self.driver.plot(*args)
+        except Exception as e:
+            self.log.exception("Magics error: %s", e)
+            raise
+
+        self.log.debug(
+            "plot(): Size of %s: %s", output_fname, os.stat(output_fname).st_size
+        )
+
+        return format, output_fname
 
     def legend(
         self, context, output, format, height, layer, style, version, width, transparent
@@ -368,82 +368,82 @@ class Plotter(datatypes.Plotter):
         output_fname = output.target(magics_format)
         path, _ = os.path.splitext(output_fname)
 
-        with LOCK:
+        # with LOCK:
 
-            # Magics is talking in cm.
-            width_cm = float(width) / 40.0
-            height_cm = float(height) / 40.0
+        # Magics is talking in cm.
+        width_cm = float(width) / 40.0
+        height_cm = float(height) / 40.0
 
-            args = [
-                self.driver.output(
-                    output_formats=[magics_format],
-                    output_name_first_page_number="off",
-                    output_cairo_transparent_background=transparent,
-                    output_width=width,
-                    output_name=path,
-                ),
-                self.driver.mmap(
-                    subpage_frame="off",
-                    page_x_length=width_cm,
-                    page_y_length=height_cm,
-                    super_page_x_length=width_cm,
-                    super_page_y_length=height_cm,
-                    subpage_x_length=width_cm,
-                    subpage_y_length=height_cm,
-                    subpage_x_position=0.0,
-                    subpage_y_position=0.0,
-                    output_width=width,
-                    page_frame="off",
-                    page_id_line="off",
-                ),
-            ]
+        args = [
+            self.driver.output(
+                output_formats=[magics_format],
+                output_name_first_page_number="off",
+                output_cairo_transparent_background=transparent,
+                output_width=width,
+                output_name=path,
+            ),
+            self.driver.mmap(
+                subpage_frame="off",
+                page_x_length=width_cm,
+                page_y_length=height_cm,
+                super_page_x_length=width_cm,
+                super_page_y_length=height_cm,
+                subpage_x_length=width_cm,
+                subpage_y_length=height_cm,
+                subpage_x_position=0.0,
+                subpage_y_position=0.0,
+                output_width=width,
+                page_frame="off",
+                page_id_line="off",
+            ),
+        ]
 
-            contour = layer.style(
-                style,
-            )
+        contour = layer.style(
+            style,
+        )
 
-            args += layer.render(
-                context,
-                self.driver,
-                contour,
-                {"legend": "on", "contour_legend_only": True},
-            )
+        args += layer.render(
+            context,
+            self.driver,
+            contour,
+            {"legend": "on", "contour_legend_only": True},
+        )
 
-            legend_font_size = "25%"
-            if width_cm < height_cm:
-                legend_font_size = "5%"
+        legend_font_size = "25%"
+        if width_cm < height_cm:
+            legend_font_size = "5%"
 
-            legend_title = layer.title
-            if hasattr(layer, legend_title):
-                legend_title = layer.legend_title
+        legend_title = layer.title
+        if hasattr(layer, legend_title):
+            legend_title = layer.legend_title
 
-            legend = self.driver.mlegend(
-                legend_title="on",
-                legend_title_text=legend_title,
-                legend_display_type="continuous",
-                legend_box_mode="positional",
-                legend_only=True,
-                legend_box_x_position=0.00,
-                legend_box_y_position=0.00,
-                legend_box_x_length=width_cm,
-                legend_box_y_length=height_cm,
-                legend_box_blanking=not transparent,
-                legend_text_font_size=legend_font_size,
-                legend_text_colour="white",
-            )
+        legend = self.driver.mlegend(
+            legend_title="on",
+            legend_title_text=legend_title,
+            legend_display_type="continuous",
+            legend_box_mode="positional",
+            legend_only=True,
+            legend_box_x_position=0.00,
+            legend_box_y_position=0.00,
+            legend_box_x_length=width_cm,
+            legend_box_y_length=height_cm,
+            legend_box_blanking=not transparent,
+            legend_text_font_size=legend_font_size,
+            legend_text_colour="white",
+        )
 
-            # self.log.debug('plot(): Calling self.driver.plot(%s)', args)
-            try:
-                self.driver.plot(*args, legend)
-            except Exception as e:
-                self.log.exception("Magics error: %s", e)
-                raise
+        # self.log.debug('plot(): Calling self.driver.plot(%s)', args)
+        try:
+            self.driver.plot(*args, legend)
+        except Exception as e:
+            self.log.exception("Magics error: %s", e)
+            raise
 
-            self.log.debug(
-                "plot(): Size of %s: %s", output_fname, os.stat(output_fname).st_size
-            )
+        self.log.debug(
+            "plot(): Size of %s: %s", output_fname, os.stat(output_fname).st_size
+        )
 
-            return output_fname
+        return output_fname
 
     def macro_text(self, args, output, data_url, layers, styles):
         head = []
@@ -499,19 +499,19 @@ class Styler(datatypes.Styler):
     def netcdf_styles(self, field, ncvar, path, variable):
         if self.user_style:
             return [MagicsWebStyle(self.user_style["name"])]
-        with LOCK:
-            try:
-                styles = self.driver.wmsstyles(
-                    self.driver.mnetcdf(
-                        netcdf_filename=path, netcdf_value_variable=variable
-                    )
+        # with LOCK:
+        try:
+            styles = self.driver.wmsstyles(
+                self.driver.mnetcdf(
+                    netcdf_filename=path, netcdf_value_variable=variable
                 )
-                # Looks like they are provided in reverse order
+            )
+            # Looks like they are provided in reverse order
 
-                return [MagicsWebStyle(**s) for s in styles.get("styles", [])]
-            except Exception as e:
-                self.log.exception("netcdf_styles: Error: %s", e)
-                styles = {}
+            return [MagicsWebStyle(**s) for s in styles.get("styles", [])]
+        except Exception as e:
+            self.log.exception("netcdf_styles: Error: %s", e)
+            styles = {}
 
         return [MagicsWebStyle(**s) for s in styles.get("styles", [])]
 
@@ -519,17 +519,17 @@ class Styler(datatypes.Styler):
         if self.user_style:
             return [MagicsWebStyle(self.user_style["name"])]
 
-        with LOCK:
-            try:
-                styles = self.driver.wmsstyles(
-                    self.driver.mgrib(
-                        grib_input_file_name=path, grib_field_position=index + 1
-                    )
+        # with LOCK:
+        try:
+            styles = self.driver.wmsstyles(
+                self.driver.mgrib(
+                    grib_input_file_name=path, grib_field_position=index + 1
                 )
-                # Looks like they are provided in reverse order
-            except Exception as e:
-                self.log.exception("grib_styles: Error: %s", e)
-                styles = {}
+            )
+            # Looks like they are provided in reverse order
+        except Exception as e:
+            self.log.exception("grib_styles: Error: %s", e)
+            styles = {}
 
         return [MagicsWebStyle(**s) for s in styles.get("styles", [])]
 
