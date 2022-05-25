@@ -9,8 +9,9 @@
 import logging
 import os
 import tempfile
-
-
+import sys
+from cachetools import cached
+from .grib_bindings.GribField import GribField
 from skinnywms import errors, protocol
 
 LOG = logging.getLogger(__name__)
@@ -24,20 +25,51 @@ def revert_bbox(bbox):
 bounding_box = {"1.3.0_EPSG:4326": revert_bbox}
 
 
-class TmpFile:
-    def __init__(self):
+class TmpFile():
+    def __init__(self,w_model,date,time,file_name=None):
         self.fname = None
+        self.file_name = file_name
+        self.w_model = w_model
+        self.date = date
+        self.time = time
 
-    def target(self, ext):
-        fd, self.fname = tempfile.mkstemp(
-            prefix="wms-server-", suffix=".{}".format(ext)
-        )
-        os.close(fd)
+    def target(self, ext, context,
+               output,
+               bbox,
+               crs,
+               format,
+               height,
+               layers,
+               styles,
+               version,
+               width,
+               transparent):
+        directory = os.getcwd()
+
+        #  if layer is exist
+        if len(layers)>=0:
+            GribField = layers[0]
+        list = [directory, "/image/", self.w_model, "/", self.date, "/", self.time,
+                "/", str(bbox[1]), "_", str(bbox[0]), '_' + str(bbox[3]), '_', str(bbox[2]),
+                "_" + GribField.name.replace('/', ''), ".png"]
+
+        file = ''.join(list)
+
+        # os.makedirs(file, mode=0o644, exist_ok=False)
+        # file.mkdir(parents=True, exist_ok=True)
+
+        address = {"image/", }
+        self.fname = file
+
+        # fd, self.fname = tempfile.mkstemp(
+        #     prefix="wms-server-", suffix=".{}".format(ext)
+        # )
+        # os.close(fd)
 
         # Change output plot file permissions to something more reasonable, so
         # we are at least able to read the produced plots if directed outside
         # the docker environment (through the use of --volume).
-        os.chmod(self.fname, 0o644)
+        # os.chmod(self.fname, 0o644)
         return self.fname
 
     def content(self):
@@ -47,13 +79,17 @@ class TmpFile:
         return c
 
     def cleanup(self):
-        LOG.debug("Deleting %s" % self.fname)
-        os.unlink(self.fname)
+        pass;
+        # LOG.debug("Deleting %s" % self.fname)
+        # os.unlink(self.fname)
 
 
 class NoCaching:
-    def create_output(self):
-        return TmpFile()
+    # def create_output(self):
+    #     return TmpFile()
+    def create_output(self, layers, bbox,w_model, date,time):
+        tmp = TmpFile(w_model,date,time)
+        return tmp
 
 
 class WMSServer:
@@ -77,10 +113,8 @@ class WMSServer:
         self.availability = availability
         self.availability.set_context(self)
 
-    def process(
-        self, request, Response, send_file, render_template, reraise=False, output=None
-    ):
-
+    def process(self, request, Response, send_file, render_template, w_model,date, time, reraise, output=None):
+        reraise = False
         url = request.url.split("?")[0]
 
         LOG.info(request.url)
@@ -94,9 +128,11 @@ class WMSServer:
 
         req_orig = params.setdefault("request", "getcapabilities")
         req = req_orig.lower()
+        if params.get('layers') !=None:
+            output = self.caching.create_output(layers=params.get('layers'), bbox=params.get('bbox').replace(',', '_'), w_model=w_model,date=date, time=time)
 
-        if output is None:
-            output = self.caching.create_output()
+        # if output is None:
+        #     output = self.caching.create_output()
 
         try:
             LOG.info(req)
@@ -126,7 +162,7 @@ class WMSServer:
 
                 content_type, path = self.get_map(**params)
                 resp = send_file(path, content_type)
-                output.cleanup()
+                # output.cleanup()
 
                 return resp
 
@@ -143,7 +179,7 @@ class WMSServer:
 
                 content_type, path = self.get_legend(**params)
                 resp = send_file(path, content_type)
-                output.cleanup()
+                # output.cleanup()
 
                 return resp
 

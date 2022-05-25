@@ -7,7 +7,7 @@ __all__ = [
 
 
 def main():
-    application.run(debug=True, threaded=False)
+    application.run(debug=True, threaded=True)
 
 
 if __name__ == "__main__":

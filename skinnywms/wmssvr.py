@@ -8,7 +8,7 @@
 
 import os
 import argparse
-
+from flask_caching import Cache
 from flask import Flask, request, Response, render_template, send_file, jsonify
 from flask_cors import CORS, cross_origin
 from .server import WMSServer
@@ -18,13 +18,20 @@ from collections import defaultdict
 import json
 import glob, os.path
 from mergedeep import merge
+import os.path
 
+application = Flask(__name__, static_url_path='', static_folder='web/static', )
 
-application = Flask(__name__, static_url_path='', static_folder='web/static',)
-
+config = {
+    "DEBUG": True,  # some Flask specific configs
+    "CACHE_TYPE": "redis",  # Flask-Caching related configs
+    "CACHE_DEFAULT_TIMEOUT": 300,
+    "CORS_HEADERS": "Content-Type",
+    'CACHE_REDIS_URL': 'redis://localhost:6379/0'
+}
 cors = CORS(application)
 application.config['CORS_HEADERS'] = 'Content-Type'
-
+# application.config.from_mapping(config)
 demo = os.path.join(os.path.dirname(__file__), "testdata", "sfc.grib")
 
 demo = os.environ.get("SKINNYWMS_DATA_PATH", demo)
@@ -79,19 +86,43 @@ def wms():
 
     w_model = request_args['model'] if "model" in request_args else 'ecmwf'
     date = request_args['date'] if "date" in request_args else '20220501'
-    time = request_args['time'] if "time" in request_args else '00'
+    time = request_args['time'] if "time" in request_args else '01'
 
     location = "data/" + w_model + "/" + date + "/" + time + "/"
 
+    dict = request.values.to_dict()
+    bbox = str(dict.get('bbox')).split(",")
+
     server.setAvailability(Availability(location))
 
-    return server.process(
+    if len(dict) >= 3:
+        file_dir = ["/image/", w_model, "/", date, "/", time, "/"]
+        file = ''.join(file_dir)
+        directory = os.getcwd()
+
+        if not os.path.exists(directory + file):
+            os.makedirs(directory + file)
+
+        # directory name for save image .png
+        file_name = directory + file + str(float(bbox[0])) + '_' + str(float(bbox[1])) + '_' + str(
+            float(bbox[2])) + '_' + str(float(bbox[3])) + "_" + dict["layers"].replace('/', '') + ".png"
+
+        #  if image is exist so return image
+        if os.path.exists(file_name):
+            return send_file(file_name, mimetype='image/png')
+
+    img = server.process(
         request,
         Response=Response,
         send_file=send_file,
         render_template=render_template,
+        w_model=w_model,
+        date=date,
+        time=time,
         reraise=True,
+        output=None
     )
+    return img
 
 
 def getDirectoriesName(base_path, depth):

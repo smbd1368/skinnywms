@@ -14,7 +14,7 @@ __all__ = [
     "Availability",
 ]
 
-# LOCK = threading.Lock()
+LOCK = threading.Lock()
 
 
 class Availability(datatypes.Availability):
@@ -29,20 +29,20 @@ class Availability(datatypes.Availability):
 
     def load(self):
 
-        # with LOCK:
+        with LOCK:
 
-        if self._loaded:
-            return
+            if self._loaded:
+                return
 
-        if os.path.isdir(self._path):
-            self.add_directory(self._path)
-        elif os.path.isfile(self._path):
-            self.add_file(self._path)
-        else:
-            raise NotImplementedError(
-                "%s is neither a file not  a directory" % (self._path,)
-            )
-        self._loaded = True
+            if os.path.isdir(self._path):
+                self.add_directory(self._path)
+            elif os.path.isfile(self._path):
+                self.add_file(self._path)
+            else:
+                raise NotImplementedError(
+                    "%s is neither a file not  a directory" % (self._path,)
+                )
+            self._loaded = True
 
     def add_directory(self, path):
         for fname in sorted(os.listdir(path)):
