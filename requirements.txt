@@ -1,4 +1,19 @@
 # pip requirements file
 # pip freeze > requirements.txt
-Flask>=1.1.1
-xarray==0.14.0
+Flask
+Flask-Cors
+xarray
+ipykernel
+filelock
+nbsphinx
+sphinx_rtd_theme
+sphinx-panels
+Sphinx-Gallery
+pyyaml
+Pygments>=2.6.1
+tqdm
+markdown
+eccodes
+magics
+ecmwflibs
+termcolor
